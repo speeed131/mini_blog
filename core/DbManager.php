@@ -32,6 +32,6 @@ class DbManager
             return current($this->connections);
         }
 
-        return $this->connections[[$name]];
+        return $this->connections[$name];
     }
 }
