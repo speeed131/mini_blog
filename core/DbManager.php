@@ -1,5 +1,10 @@
 <?php
 
+/*
+    connect関数とgetconnect関数で、mysqlの接続を行う。
+
+*/
+
 class DbManager
 {
     protected $connections = array();
@@ -60,7 +65,6 @@ class DbManager
     {
         if(!isset($this->repositories[$repository_name])){
             $repository_class = $repository_name. 'Repository';
-            
         }
     }
 }
