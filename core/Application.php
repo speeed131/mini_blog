@@ -91,16 +91,45 @@ abstract class Application
 
     public function run()
     {
-        $params = $this->router->resolve($this->request->getPathInfo());
-        if($params === false){
-            // todo-A
-        }
-        $controller = $params['controller'];
-        $action = $params['action'];
+        try{
+            $params = $this->router->resolve($this->request->getPathInfo());
+            if($params === false){
+                // todo-A
+                throw new HttpNotFoundException('No route found for ' .$this->request->getPathInfo());
+            }
+            $controller = $params['controller'];
+            $action = $params['action'];
 
-        $this->runAction($controller, $action, $params);
+            $this->runAction($controller, $action, $params);
+
+        }catch(HttpNotFoundException $e){ //HttpNotFoundException を $e の変数に入れている
+            $this->render404Page($e);
+        }
 
         $this->response->send();
+    }
+
+    protected function render404Page($e)
+    {
+        $this->response->setStatusCode(404, 'Not Found');
+        $message = $this->isDebugMode() ? $e->getMessage() : 'Page not found.';
+        $message = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
+
+        $this->response->setContent(<<<EOF
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>404</title>
+    </head>
+    <body>
+        {$message}
+    </body>
+    </html>
+    EOF
+        );
     }
 
     public function runAction($controller_name, $action, $params = array())
@@ -110,6 +139,7 @@ abstract class Application
         $controller = $this->findController($controller_class);
         if ($controller === false) {
             # todo-B
+            throw new HttpNotFoundException($controller_class . ' controller is not found.');
         }
 
         $content = $controller->run($action, $params);
