@@ -2,7 +2,10 @@
 
 /*
     connect関数とgetconnect関数で、mysqlの接続を行う。
+    それぞれどの接続を行うかを、Repositoryクラスで管理する。
 
+    アプリケーションのプロセス終了時に、インスタンスが自動で破棄される。
+    参照情報が残っていると破棄できないため、Repositoryクラスを先に破棄している。
 */
 
 class DbManager
@@ -65,6 +68,24 @@ class DbManager
     {
         if(!isset($this->repositories[$repository_name])){
             $repository_class = $repository_name. 'Repository';
+            $con = $this->getConnectionForRepository($repository_name);
+
+            $repository = new $repository_class($con);
+
+            $this->repositories[$repository_name] = $repository;
+        }
+
+        return $this->repositories[$repository_name];
+    }
+
+    public function __destruct()
+    {
+        foreach ($this->repositories as $repository) {
+            unset($repository);
+        }
+
+        foreach ($this->connections as $con) {
+            unset($con);
         }
     }
 }
