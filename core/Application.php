@@ -116,19 +116,19 @@ abstract class Application
         $message = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
 
         $this->response->setContent(<<<EOF
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>404</title>
-    </head>
-    <body>
-        {$message}
-    </body>
-    </html>
-    EOF
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>404</title>
+</head>
+<body>
+    {$message}
+</body>
+</html>
+EOF
         );
     }
 
