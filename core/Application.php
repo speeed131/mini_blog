@@ -7,6 +7,7 @@ abstract class Application
     protected $response;
     protected $session;
     protected $db_manager;
+    protected $login_actoin = array();
 
     public function __construct($debug = false)
     {
@@ -94,7 +95,6 @@ abstract class Application
         try{
             $params = $this->router->resolve($this->request->getPathInfo());
             if($params === false){
-                // todo-A
                 throw new HttpNotFoundException('No route found for ' .$this->request->getPathInfo());
             }
             $controller = $params['controller'];
@@ -104,6 +104,10 @@ abstract class Application
 
         }catch(HttpNotFoundException $e){ //HttpNotFoundException を $e の変数に入れている
             $this->render404Page($e);
+
+        }catch(UnauthorizedActionException $e){
+            list($controller, $action) = $this->login_actoin;
+            $this->runAction($controller,$action);
         }
 
         $this->response->send();
